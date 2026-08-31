@@ -1,32 +1,104 @@
-# React + TypeScript + Vite
+# PlacementOS — Student Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+PlacementOS is a student-focused placement management portal designed to help students discover opportunities, manage applications, maintain their professional profile, and track their placement journey from preparation to placement.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The Student Portal provides a centralized workspace for students to manage important placement activities in one place.
 
-## React Compiler
+The implementation focuses on a clean, responsive, and easy-to-use interface with dedicated sections for opportunities, applications, resumes, profiles, notifications, settings, and placement progress.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the Oxlint configuration
+### Dashboard
+- Placement overview and key statistics
+- Recommended opportunities
+- Application progress
+- Placement readiness information
+- Upcoming placement activities
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+### Opportunities
+- Browse available internships and full-time opportunities
+- Search by role, company, skills, or category
+- Filter opportunities by type
+- View location, work mode, salary, required skills, and deadlines
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+### Application Tracker
+- Track all submitted applications
+- Application status tracking
+- Shortlisted and interview status
+- Selected and rejected application states
+- Next-step information
+- Visual application progress tracker
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+### Resume Center
+- Resume overview
+- Resume completeness information
+- ATS-oriented resume insights
+- Resume sections and improvement suggestions
+- Resume management interface
+
+### Student Profile
+- Personal information
+- Education details
+- Target role
+- Technical skill profile
+- Placement readiness score
+- Portfolio section
+- Professional profile links
+
+### Placement Timeline
+- Track major placement milestones
+- Completed, current, and upcoming stages
+- Placement journey progress
+- Next-step guidance
+
+### Notifications
+- Application updates
+- New opportunity notifications
+- Interview reminders
+
+### Settings
+- Student portal preferences and account settings
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Lucide React
+
+## Project Structure
+
+```text
+frontend/
+├── public/
+│   └── favicon.svg
+│
+├── src/
+│   ├── components/
+│   │   └── Sidebar.tsx
+│   │
+│   ├── data/
+│   │   └── placementData.ts
+│   │
+│   ├── pages/
+│   │   ├── Applications.tsx
+│   │   ├── Dashboard.tsx
+│   │   ├── Notifications.tsx
+│   │   ├── Opportunities.tsx
+│   │   ├── PlacementTimeline.tsx
+│   │   ├── Profile.tsx
+│   │   ├── Resume.tsx
+│   │   └── Settings.tsx
+│   │
+│   ├── App.tsx
+│   ├── index.css
+│   └── main.tsx
+│
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
