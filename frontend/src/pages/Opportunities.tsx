@@ -25,7 +25,9 @@ function Opportunities() {
     const today = new Date();
 
     return opportunities.filter((opportunity) => {
-      const deadline = new Date(`${opportunity.deadline}T23:59:59`);
+      const deadline = new Date(
+        `${opportunity.deadline}T23:59:59`,
+      );
 
       return deadline >= today;
     });
@@ -246,7 +248,9 @@ function Opportunities() {
 
                     <button
                       type="button"
-                      onClick={() => navigate("/opportunities")}
+                      onClick={() =>
+                        navigate(`/opportunities/${opportunity.id}`)
+                      }
                       className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-600"
                     >
                       View opportunity

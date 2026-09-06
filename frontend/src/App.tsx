@@ -5,6 +5,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Opportunities from "./pages/Opportunities";
+import OpportunityDetails from "./pages/OpportunityDetails";
 import Applications from "./pages/Applications";
 import Resume from "./pages/Resume";
 import Profile from "./pages/Profile";
@@ -19,7 +20,10 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-slate-50">
         {/* Fixed Sidebar */}
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
 
         {/* Main Application Area */}
         <main className="min-h-screen lg:pl-72">
@@ -35,8 +39,9 @@ function App() {
             </button>
 
             <div className="ml-3">
-              <h1 className="text-sm font-bold text-slate-900">PlacementOS</h1>
-
+              <h1 className="text-sm font-bold text-slate-900">
+                PlacementOS
+              </h1>
               <p className="text-xs text-slate-500">Student Portal</p>
             </div>
           </header>
@@ -55,7 +60,16 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
 
                 {/* Opportunities */}
-                <Route path="/opportunities" element={<Opportunities />} />
+                <Route
+                  path="/opportunities"
+                  element={<Opportunities />}
+                />
+
+                {/* Opportunity Details */}
+                <Route
+                  path="/opportunities/:id"
+                  element={<OpportunityDetails />}
+                />
 
                 {/* Applications */}
                 <Route path="/applications" element={<Applications />} />
@@ -67,7 +81,10 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
 
                 {/* Notifications */}
-                <Route path="/notifications" element={<Notifications />} />
+                <Route
+                  path="/notifications"
+                  element={<Notifications />}
+                />
 
                 {/* Settings */}
                 <Route path="/settings" element={<Settings />} />
@@ -77,6 +94,7 @@ function App() {
                   path="/placement-timeline"
                   element={<PlacementTimeline />}
                 />
+
                 {/* Catch-all Route */}
                 <Route
                   path="*"

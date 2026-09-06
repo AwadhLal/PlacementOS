@@ -53,6 +53,52 @@ function Notifications() {
     [notificationList],
   );
 
+  const updatesThisWeek = useMemo(() => {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(now.getDate() - 7);
+
+    return notificationList.filter((notification) => {
+      const time = notification.time.toLowerCase().trim();
+
+      if (
+        time.includes("just now") ||
+        time.includes("today") ||
+        time.includes("yesterday")
+      ) {
+        return true;
+      }
+
+      const daysAgoMatch = time.match(/(\d+)\s+days?\s+ago/);
+
+      if (daysAgoMatch) {
+        return Number(daysAgoMatch[1]) <= 7;
+      }
+
+      const hoursAgoMatch = time.match(/(\d+)\s+hours?\s+ago/);
+
+      if (hoursAgoMatch) {
+        return true;
+      }
+
+      const minutesAgoMatch = time.match(
+        /(\d+)\s+minutes?\s+ago/,
+      );
+
+      if (minutesAgoMatch) {
+        return true;
+      }
+
+      const parsedDate = new Date(notification.time);
+
+      return (
+        !Number.isNaN(parsedDate.getTime()) &&
+        parsedDate >= sevenDaysAgo &&
+        parsedDate <= now
+      );
+    }).length;
+  }, [notificationList]);
+
   const toggleReadStatus = (notificationId: number) => {
     setNotificationList((currentNotifications) =>
       currentNotifications.map((notification) =>
@@ -98,8 +144,8 @@ function Notifications() {
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-            Keep track of placement updates, application activity, and
-            important opportunities.
+            Keep track of placement updates, application activity,
+            and important opportunities.
           </p>
         </div>
 
@@ -131,7 +177,7 @@ function Notifications() {
         <SummaryCard
           icon={Sparkles}
           label="Updates this week"
-          value={notificationList.length}
+          value={updatesThisWeek}
         />
       </div>
 
