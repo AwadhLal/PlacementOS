@@ -13,9 +13,20 @@ import {
   UserRound,
 } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
 import { studentProfile } from "../data/placementData";
 
 function Profile() {
+  const navigate = useNavigate();
+
+  const getInitials = (name: string) =>
+    name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -23,7 +34,7 @@ function Profile() {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-lg font-bold shadow-lg shadow-indigo-950/40">
-              AL
+              {getInitials(studentProfile.name)}
             </div>
 
             <div>
@@ -44,6 +55,7 @@ function Profile() {
 
           <button
             type="button"
+            onClick={() => navigate("/settings")}
             className="inline-flex w-fit items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-indigo-50"
           >
             <Edit3 size={16} />
@@ -99,6 +111,7 @@ function Profile() {
 
             <button
               type="button"
+              onClick={() => navigate("/settings")}
               className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
               aria-label="Edit personal information"
             >
@@ -202,6 +215,7 @@ function Profile() {
 
           <button
             type="button"
+            onClick={() => navigate("/settings")}
             className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             <Plus size={16} />
@@ -267,6 +281,7 @@ function Profile() {
 
             <button
               type="button"
+              onClick={() => navigate("/settings")}
               className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
               aria-label="Edit portfolio"
             >
@@ -292,6 +307,30 @@ function Profile() {
               label="Portfolio website"
               value={studentProfile.portfolio.website}
             />
+
+            {!studentProfile.portfolio.github &&
+              !studentProfile.portfolio.linkedin &&
+              !studentProfile.portfolio.website && (
+                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center">
+                  <p className="text-sm font-semibold text-slate-700">
+                    No portfolio links added
+                  </p>
+
+                  <p className="mt-1 text-xs leading-5 text-slate-500">
+                    Add your GitHub, LinkedIn, or portfolio website
+                    to strengthen your profile.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => navigate("/settings")}
+                    className="mt-3 inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-indigo-600"
+                  >
+                    <Edit3 size={14} />
+                    Add portfolio links
+                  </button>
+                </div>
+              )}
           </div>
         </section>
       </div>
@@ -311,6 +350,7 @@ function Profile() {
 
           <button
             type="button"
+            onClick={() => navigate("/settings")}
             className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             <Plus size={16} />
@@ -410,9 +450,41 @@ function PortfolioLink({
 }) {
   const hasLink = Boolean(value);
 
+  if (!hasLink) {
+    return (
+      <div className="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3">
+        <div className="rounded-lg bg-slate-100 p-2 text-slate-400">
+          {icon}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-slate-800">
+            {label}
+          </p>
+
+          <p className="mt-0.5 truncate text-xs text-slate-400">
+            Add your {label} profile
+          </p>
+        </div>
+
+        <ExternalLink
+          size={15}
+          className="shrink-0 text-slate-200"
+        />
+      </div>
+    );
+  }
+
+  const href =
+    value.startsWith("http://") || value.startsWith("https://")
+      ? value
+      : `https://${value}`;
+
   return (
-    <button
-      type="button"
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
       className="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50/40"
     >
       <div className="rounded-lg bg-slate-100 p-2 text-slate-600">
@@ -424,20 +496,16 @@ function PortfolioLink({
           {label}
         </p>
 
-        <p
-          className={`mt-0.5 truncate text-xs ${
-            hasLink ? "text-indigo-600" : "text-slate-400"
-          }`}
-        >
-          {hasLink ? value : `Add your ${label} profile`}
+        <p className="mt-0.5 truncate text-xs text-indigo-600">
+          {value}
         </p>
       </div>
 
       <ExternalLink
         size={15}
-        className="shrink-0 text-slate-300"
+        className="shrink-0 text-slate-400"
       />
-    </button>
+    </a>
   );
 }
 

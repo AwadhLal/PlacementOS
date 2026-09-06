@@ -77,6 +77,11 @@ function App() {
                   path="/placement-timeline"
                   element={<PlacementTimeline />}
                 />
+                {/* Catch-all Route */}
+                <Route
+                  path="*"
+                  element={<Navigate to="/dashboard" replace />}
+                />
               </Routes>
             </div>
           </div>

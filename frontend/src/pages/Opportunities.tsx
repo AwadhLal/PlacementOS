@@ -9,33 +9,64 @@ import {
   SlidersHorizontal,
   Sparkles,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { opportunities } from "../data/placementData";
 
 type Filter = "All" | "Internship" | "Full-time";
 
 function Opportunities() {
+  const navigate = useNavigate();
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Filter>("All");
+
+  const activeOpportunities = useMemo(() => {
+    const today = new Date();
+
+    return opportunities.filter((opportunity) => {
+      const deadline = new Date(`${opportunity.deadline}T23:59:59`);
+
+      return deadline >= today;
+    });
+  }, []);
 
   const filteredOpportunities = useMemo(() => {
     const query = search.toLowerCase().trim();
 
-    return opportunities.filter((opportunity) => {
-      const matchesFilter = filter === "All" || opportunity.type === filter;
+    return activeOpportunities
+      .filter((opportunity) => {
+        const matchesFilter =
+          filter === "All" || opportunity.type === filter;
 
-      const matchesSearch =
-        !query ||
-        opportunity.role.toLowerCase().includes(query) ||
-        opportunity.company.toLowerCase().includes(query) ||
-        opportunity.skills.some((skill) =>
-          skill.toLowerCase().includes(query),
-        ) ||
-        opportunity.category.toLowerCase().includes(query);
+        const matchesSearch =
+          !query ||
+          opportunity.role.toLowerCase().includes(query) ||
+          opportunity.company.toLowerCase().includes(query) ||
+          opportunity.skills.some((skill) =>
+            skill.toLowerCase().includes(query),
+          ) ||
+          opportunity.category.toLowerCase().includes(query);
 
-      return matchesFilter && matchesSearch;
-    });
-  }, [search, filter]);
+        return matchesFilter && matchesSearch;
+      })
+      .sort(
+        (a, b) =>
+          new Date(`${a.deadline}T23:59:59`).getTime() -
+          new Date(`${b.deadline}T23:59:59`).getTime(),
+      );
+  }, [activeOpportunities, search, filter]);
+
+  const formatDeadline = (deadline: string) => {
+    return new Date(`${deadline}T00:00:00`).toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      },
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -53,8 +84,8 @@ function Opportunities() {
             </h1>
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
-              Discover internships and jobs that match your skills, interests,
-              and placement goals.
+              Discover internships and jobs that match your skills,
+              interests, and placement goals.
             </p>
           </div>
 
@@ -64,8 +95,13 @@ function Opportunities() {
             </div>
 
             <div>
-              <p className="text-xs text-slate-400">Available opportunities</p>
-              <p className="text-xl font-bold">{opportunities.length}</p>
+              <p className="text-xs text-slate-400">
+                Available opportunities
+              </p>
+
+              <p className="text-xl font-bold">
+                {activeOpportunities.length}
+              </p>
             </div>
           </div>
         </div>
@@ -96,20 +132,22 @@ function Opportunities() {
             </div>
 
             <div className="flex h-12 rounded-xl bg-slate-100 p-1">
-              {(["All", "Internship", "Full-time"] as Filter[]).map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => setFilter(item)}
-                  className={`rounded-lg px-3 text-xs font-semibold transition sm:px-4 sm:text-sm ${
-                    filter === item
-                      ? "bg-white text-indigo-600 shadow-sm"
-                      : "text-slate-500 hover:text-slate-800"
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
+              {(["All", "Internship", "Full-time"] as Filter[]).map(
+                (item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setFilter(item)}
+                    className={`rounded-lg px-3 text-xs font-semibold transition sm:px-4 sm:text-sm ${
+                      filter === item
+                        ? "bg-white text-indigo-600 shadow-sm"
+                        : "text-slate-500 hover:text-slate-800"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -127,13 +165,10 @@ function Opportunities() {
           </p>
         </div>
 
-        <button
-          type="button"
-          className="hidden items-center gap-2 text-sm font-semibold text-slate-600 sm:flex"
-        >
-          Most relevant
+        <div className="hidden items-center gap-2 text-sm font-semibold text-slate-600 sm:flex">
+          <span>Most relevant</span>
           <SlidersHorizontal size={15} />
-        </button>
+        </div>
       </div>
 
       {/* Opportunity cards */}
@@ -204,13 +239,14 @@ function Opportunities() {
                       <span>
                         Deadline{" "}
                         <strong className="font-semibold text-slate-700">
-                          {opportunity.deadline}
+                          {formatDeadline(opportunity.deadline)}
                         </strong>
                       </span>
                     </div>
 
                     <button
                       type="button"
+                      onClick={() => navigate("/opportunities")}
                       className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-600"
                     >
                       View opportunity

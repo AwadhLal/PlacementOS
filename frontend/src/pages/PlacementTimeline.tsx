@@ -9,6 +9,8 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
+
 const timeline = [
   {
     title: "Profile completed",
@@ -65,6 +67,8 @@ function UserIcon({ size = 20 }: { size?: number }) {
 }
 
 function PlacementTimeline() {
+  const navigate = useNavigate();
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -225,6 +229,9 @@ function PlacementTimeline() {
 
                             <button
                               type="button"
+                              onClick={() =>
+                                navigate("/opportunities")
+                              }
                               className="inline-flex w-fit items-center gap-2 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
                             >
                               View opportunities

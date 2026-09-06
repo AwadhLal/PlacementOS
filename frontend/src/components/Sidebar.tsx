@@ -6,12 +6,12 @@ import {
   UserRound,
   Bell,
   Settings,
-  LogOut,
   GraduationCap,
   ChevronLeft,
   CalendarDays,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { studentProfile } from "../data/placementData";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -195,28 +195,22 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
             {/* Avatar */}
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
-              AL
+              {studentProfile.name
+                .split(" ")
+                .map((part) => part[0])
+                .join("")}
             </div>
 
             {/* User info */}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-slate-900">
-                Awadh Lal
+                {studentProfile.name}
               </p>
 
               <p className="truncate text-xs text-slate-500">
-                Computer Science
+                {studentProfile.role}
               </p>
             </div>
-
-            {/* Logout */}
-            <button
-              type="button"
-              className="rounded-lg p-2 text-slate-400 transition hover:bg-white hover:text-red-500"
-              aria-label="Log out"
-            >
-              <LogOut size={17} />
-            </button>
           </div>
         </div>
       </aside>

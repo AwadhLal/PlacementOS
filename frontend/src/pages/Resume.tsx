@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import {
   CheckCircle2,
   Download,
@@ -10,6 +11,52 @@ import {
 } from "lucide-react";
 
 function Resume() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState("");
+
+  const handleChoosePdf = () => {
+    setFileError("");
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (file.type !== "application/pdf") {
+      setSelectedFile(null);
+      setFileError("Please select a valid PDF file.");
+      event.target.value = "";
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      setSelectedFile(null);
+      setFileError("PDF file must be smaller than 5 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    setFileError("");
+    setSelectedFile(file);
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -53,6 +100,7 @@ function Resume() {
               <p className="text-sm font-medium text-slate-500">
                 Current resume
               </p>
+
               <p className="mt-1 font-bold text-slate-900">
                 Awadh_Lal_Resume.pdf
               </p>
@@ -67,6 +115,7 @@ function Resume() {
 
           <div className="mt-2 flex items-end gap-2">
             <p className="text-3xl font-bold text-slate-900">82</p>
+
             <p className="mb-1 text-sm font-semibold text-emerald-600">
               Good
             </p>
@@ -265,12 +314,48 @@ function Resume() {
           PlacementOS AI.
         </p>
 
+        {/* Hidden PDF input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/pdf,.pdf"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
         <button
           type="button"
+          onClick={handleChoosePdf}
           className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-600"
         >
           Choose PDF
         </button>
+
+        {/* Validation error */}
+        {fileError && (
+          <p className="mt-3 text-sm font-medium text-red-600">
+            {fileError}
+          </p>
+        )}
+
+        {/* Selected file */}
+        {selectedFile && (
+          <div className="mx-auto mt-5 flex max-w-md items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-left">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-600">
+              <CheckCircle2 size={19} />
+            </div>
+
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-slate-900">
+                {selectedFile.name}
+              </p>
+
+              <p className="mt-0.5 text-xs text-slate-500">
+                PDF • {formatFileSize(selectedFile.size)} • Ready for upload
+              </p>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

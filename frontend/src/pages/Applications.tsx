@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ArrowRight,
   BriefcaseBusiness,
@@ -35,6 +36,22 @@ const statusConfig = {
 const statusSteps = ["Applied", "Shortlisted", "Interview", "Selected"];
 
 function Applications() {
+  const [expandedApplication, setExpandedApplication] = useState<
+    number | null
+  >(null);
+
+  const activeApplications = applications.filter(
+    (application) =>
+      application.status !== "Rejected" &&
+      application.status !== "Selected",
+  );
+
+  const toggleApplication = (applicationId: number) => {
+    setExpandedApplication((currentId) =>
+      currentId === applicationId ? null : applicationId,
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -57,16 +74,12 @@ function Applications() {
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-            <p className="text-xs text-slate-400">Active applications</p>
+            <p className="text-xs text-slate-400">
+              Active applications
+            </p>
 
             <p className="mt-1 text-xl font-bold">
-              {
-                applications.filter(
-                  (application) =>
-                    application.status !== "Rejected" &&
-                    application.status !== "Selected",
-                ).length
-              }
+              {activeApplications.length}
             </p>
           </div>
         </div>
@@ -74,7 +87,10 @@ function Applications() {
 
       {/* Summary */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard label="Total Applications" value={applications.length} />
+        <SummaryCard
+          label="Total Applications"
+          value={applications.length}
+        />
 
         <SummaryCard
           label="Shortlisted"
@@ -107,7 +123,9 @@ function Applications() {
       {/* Application tracker */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 px-5 py-5 sm:px-6">
-          <h2 className="font-bold text-slate-900">Application tracker</h2>
+          <h2 className="font-bold text-slate-900">
+            Application tracker
+          </h2>
 
           <p className="mt-1 text-sm text-slate-500">
             Monitor the progress of every application.
@@ -120,7 +138,12 @@ function Applications() {
               const config = statusConfig[application.status];
               const StatusIcon = config.icon;
 
-              const currentStep = statusSteps.indexOf(application.status);
+              const currentStep = statusSteps.indexOf(
+                application.status,
+              );
+
+              const isExpanded =
+                expandedApplication === application.id;
 
               return (
                 <article
@@ -228,6 +251,7 @@ function Applications() {
                       </div>
                     </div>
                   )}
+
                   {/* Rejected state */}
                   {application.status === "Rejected" && (
                     <div className="mt-5 rounded-xl bg-red-50 px-4 py-3">
@@ -241,26 +265,98 @@ function Applications() {
                     </div>
                   )}
 
+                  {/* Selected state */}
+                  {application.status === "Selected" && (
+                    <div className="mt-5 rounded-xl bg-indigo-50 px-4 py-3">
+                      <p className="text-xs font-semibold text-indigo-700">
+                        Congratulations!
+                      </p>
+
+                      <p className="mt-1 text-xs text-indigo-600">
+                        This application has reached the selected stage.
+                      </p>
+                    </div>
+                  )}
+
                   {/* Next step */}
                   {application.nextStep && (
-                    <div className="mt-5 flex flex-col gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                          Next step
-                        </p>
+                    <div className="mt-5 rounded-xl border border-slate-100 bg-slate-50 p-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                            Next step
+                          </p>
 
-                        <p className="mt-1 text-sm font-semibold text-slate-700">
-                          {application.nextStep}
-                        </p>
+                          <p className="mt-1 text-sm font-semibold text-slate-700">
+                            {application.nextStep}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            toggleApplication(application.id)
+                          }
+                          aria-expanded={isExpanded}
+                          className="inline-flex w-fit items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-50"
+                        >
+                          {isExpanded ? "Hide details" : "View details"}
+
+                          <ArrowRight
+                            size={14}
+                            className={`transition-transform ${
+                              isExpanded ? "rotate-90" : ""
+                            }`}
+                          />
+                        </button>
                       </div>
 
-                      <button
-                        type="button"
-                        className="inline-flex w-fit items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-50"
-                      >
-                        View details
-                        <ArrowRight size={14} />
-                      </button>
+                      {/* Expanded details */}
+                      {isExpanded && (
+                        <div className="mt-4 border-t border-slate-200 pt-4">
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            <div className="rounded-lg bg-white p-3">
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                                Company
+                              </p>
+
+                              <p className="mt-1 text-sm font-semibold text-slate-700">
+                                {application.company}
+                              </p>
+                            </div>
+
+                            <div className="rounded-lg bg-white p-3">
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                                Position
+                              </p>
+
+                              <p className="mt-1 text-sm font-semibold text-slate-700">
+                                {application.role}
+                              </p>
+                            </div>
+
+                            <div className="rounded-lg bg-white p-3">
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                                Applied date
+                              </p>
+
+                              <p className="mt-1 text-sm font-semibold text-slate-700">
+                                {application.appliedDate}
+                              </p>
+                            </div>
+
+                            <div className="rounded-lg bg-white p-3">
+                              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                                Current status
+                              </p>
+
+                              <p className="mt-1 text-sm font-semibold text-slate-700">
+                                {application.status}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </article>
@@ -288,7 +384,13 @@ function Applications() {
   );
 }
 
-function SummaryCard({ label, value }: { label: string; value: number }) {
+function SummaryCard({
+  label,
+  value,
+}: {
+  label: string;
+  value: number;
+}) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <p className="text-sm font-medium text-slate-500">{label}</p>

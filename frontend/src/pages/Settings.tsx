@@ -2,13 +2,22 @@ import {
   Bell,
   ChevronRight,
   Lock,
-  LogOut,
   Moon,
   ShieldCheck,
   UserRound,
 } from "lucide-react";
 
+import { useState } from "react";
+
 function Settings() {
+  const [placementNotifications, setPlacementNotifications] =
+    useState(true);
+
+  const [opportunityAlerts, setOpportunityAlerts] =
+    useState(true);
+
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -57,14 +66,20 @@ function Settings() {
           icon={<Bell size={19} />}
           title="Placement notifications"
           description="Get notified about applications, interviews, and offers."
-          enabled
+          enabled={placementNotifications}
+          onToggle={() =>
+            setPlacementNotifications((current) => !current)
+          }
         />
 
         <ToggleSetting
           icon={<Bell size={19} />}
           title="Opportunity alerts"
           description="Receive alerts when relevant opportunities are available."
-          enabled
+          enabled={opportunityAlerts}
+          onToggle={() =>
+            setOpportunityAlerts((current) => !current)
+          }
         />
       </SettingsSection>
 
@@ -77,6 +92,8 @@ function Settings() {
           icon={<Moon size={19} />}
           title="Dark mode"
           description="Use a darker interface across the application."
+          enabled={darkMode}
+          onToggle={() => setDarkMode((current) => !current)}
         />
       </SettingsSection>
 
@@ -92,24 +109,30 @@ function Settings() {
         />
       </SettingsSection>
 
-      {/* Danger zone */}
-      <section className="rounded-2xl border border-red-100 bg-white shadow-sm">
-        <div className="border-b border-red-100 px-5 py-5 sm:px-6">
-          <h2 className="font-bold text-red-600">Account actions</h2>
+      {/* Account status */}
+      <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 px-5 py-5 sm:px-6">
+          <h2 className="font-bold text-slate-900">
+            Account status
+          </h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            Actions related to your PlacementOS account.
+            Authentication and account actions will be available when
+            the backend authentication flow is connected.
           </p>
         </div>
 
         <div className="p-5 sm:p-6">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
-          >
-            <LogOut size={17} />
-            Log out
-          </button>
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-sm font-semibold text-slate-800">
+              Authentication not connected
+            </p>
+
+            <p className="mt-1 text-xs leading-5 text-slate-500">
+              Logout is intentionally unavailable until PlacementOS
+              authentication is integrated.
+            </p>
+          </div>
         </div>
       </section>
     </div>
@@ -130,10 +153,14 @@ function SettingsSection({
       <div className="border-b border-slate-100 px-5 py-5 sm:px-6">
         <h2 className="font-bold text-slate-900">{title}</h2>
 
-        <p className="mt-1 text-sm text-slate-500">{description}</p>
+        <p className="mt-1 text-sm text-slate-500">
+          {description}
+        </p>
       </div>
 
-      <div className="divide-y divide-slate-100">{children}</div>
+      <div className="divide-y divide-slate-100">
+        {children}
+      </div>
     </section>
   );
 }
@@ -157,7 +184,9 @@ function SettingsItem({
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-slate-800">{title}</p>
+        <p className="text-sm font-semibold text-slate-800">
+          {title}
+        </p>
 
         <p className="mt-1 text-xs leading-5 text-slate-500">
           {description}
@@ -177,11 +206,13 @@ function ToggleSetting({
   title,
   description,
   enabled = false,
+  onToggle,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
   enabled?: boolean;
+  onToggle: () => void;
 }) {
   return (
     <div className="flex items-center gap-4 p-5 sm:p-6">
@@ -190,7 +221,9 @@ function ToggleSetting({
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-slate-800">{title}</p>
+        <p className="text-sm font-semibold text-slate-800">
+          {title}
+        </p>
 
         <p className="mt-1 text-xs leading-5 text-slate-500">
           {description}
@@ -199,6 +232,7 @@ function ToggleSetting({
 
       <button
         type="button"
+        onClick={onToggle}
         aria-label={`Toggle ${title}`}
         aria-pressed={enabled}
         className={`relative h-6 w-11 shrink-0 rounded-full transition ${
